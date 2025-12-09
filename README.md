@@ -19,8 +19,6 @@ Here are some ideas to get you started:
 ![Metrics](/github-metrics.svg)
 ![visitors](https://visitor-badge.glitch.me/badge?page_id=page.id&left_color=green&right_color=red)
 ![Ashutosh's github activity graph](https://github-readme-activity-graph.vercel.app/graph?username=SidusAntares)
-<!-- 语言统计卡片 -->
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=SidusAntares&layout=compact&theme=github_dark)
 
-<!-- 可选：加上总览卡片 -->
-![Stats](https://github-readme-stats.vercel.app/api?username=SidusAntares&show_icons=true&theme=github_dark)
+<!-- Language Stats -->
+![Language Stats](./assets/lang-stats.svg)
