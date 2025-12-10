@@ -14,11 +14,11 @@ Here are some ideas to get you started:
 - 😄 Pronouns: ...
 - ⚡ Fun fact: ...
 -->
-![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=SidusAntares)
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=SidusAntares)
+
 ![Metrics](/github-metrics.svg)
-![visitors](https://visitor-badge.glitch.me/badge?page_id=page.id&left_color=green&right_color=red)
+
 ![Ashutosh's github activity graph](https://github-readme-activity-graph.vercel.app/graph?username=SidusAntares)
+
 
 <!-- Language Stats -->
 ![Language Stats](./assets/lang-stats.svg)
