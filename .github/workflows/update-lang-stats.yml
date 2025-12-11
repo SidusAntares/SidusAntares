@@ -1,4 +1,4 @@
-name: Update Language Stats
+name: Update Language Stats (Simple)
 
 on:
   schedule:
@@ -6,32 +6,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-readme:
+  update:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Generate language stats cards
-        uses: vn7n24fzkq/github-profile-summary-cards@release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          USERNAME: ${{ github.repository_owner }}
-          AUTO_PUSH: false
-
-      - name: Debug: list generated files
-        run: |
-          echo "=== Generated files ==="
-          ls -R profile-summary-card-output || echo "❌ No cards generated!"
-
-      - name: Create assets folder and copy card
+      - name: Fetch language stats
         run: |
           mkdir -p assets
-          # 尝试复制 CommitsPerLanguageCard（最常用）
-          cp profile-summary-card-output/default/CommitsPerLanguageCard.svg assets/lang-stats.svg
+          curl -s "https://github-readme-stats.vercel.app/api/top-langs/?username=${{ github.repository_owner }}&theme=github_dark&layout=compact&card_width=495&hide_border=true" > assets/lang-stats.svg
 
-      - name: Commit and push if changed
+      - name: Commit if changed
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -40,5 +26,5 @@ jobs:
             git commit -m "chore: auto-update language stats [skip ci]"
             git push
           else
-            echo "No changes to commit"
+            echo "No changes"
           fi
