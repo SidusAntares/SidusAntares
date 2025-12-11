@@ -12,20 +12,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create assets folder (just in case)
-        run: mkdir -p assets
-
-      - name: Generate language stats SVG
-        uses: anuraghazra/github-readme-stats@master  # ← 关键：不用 @v3
-        with:
-          username: ${{ github.repository_owner }}
-          theme: github_dark
-          include_all_commits: true
-          card_width: 495
-          hide_border: true
-          output_file: assets/lang-stats.svg
+      - name: Generate language stats cards
+        uses: vn7n24fzkq/github-profile-summary-cards@release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          USERNAME: ${{ github.repository_owner }}
+          # 注意：参数名是大写！
+          BRANCH_NAME: main  # 改成你的默认分支，如 main / master
+          AUTO_PUSH: false   # 我们自己控制提交
+
+      - name: Create assets folder and copy card
+        run: |
+          mkdir -p assets
+          # 复制“按提交的语言统计”卡片（最接近你想要的）
+          cp profile-summary-card-output/default/CommitsPerLanguageCard.svg assets/lang-stats.svg
 
       - name: Commit and push if changed
         run: |
