@@ -12,29 +12,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0  # ← 关键修复
+          fetch-depth: 0
 
       - name: Fetch language stats
         run: |
           mkdir -p assets
           curl -s "https://github-readme-stats.vercel.app/api/top-langs/?username=${{ github.repository_owner }}&theme=github_dark&layout=compact&card_width=495&hide_border=true" > assets/lang-stats.svg
 
-      - name: Commit if changed
+      - name: Commit and push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url --push origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           
-          # 调试：打印 remote
-          git remote -v
-
           git add assets/lang-stats.svg
           if ! git diff --staged --quiet; then
             git commit -m "chore: auto-update language stats [skip ci]"
-            git push
+            # 推送到 main 分支（根据你的实际情况修改）
+            git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git HEAD:main
           else
             echo "No changes"
           fi
