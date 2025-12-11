@@ -1,4 +1,4 @@
-name: Update Language Stats (with PAT)
+name: Update Language Stats (with GITHUB_TOKEN)
 
 on:
   schedule:
@@ -8,6 +8,8 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # ← 关键！必须加这一行
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,15 +19,14 @@ jobs:
           mkdir -p assets
           curl -s "https://github-readme-stats.vercel.app/api/top-langs/?username=${{ github.repository_owner }}&theme=github_dark&layout=compact&card_width=495&hide_border=true" > assets/lang-stats.svg
 
-      - name: Commit and push with PAT
+      - name: Commit and push with GITHUB_TOKEN
         env:
-          GH_TOKEN: ${{ secrets.LANGUAGE_UPDATE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 使用 PAT 认证（不会被特殊字符干扰）
-          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           
           git add assets/lang-stats.svg
           if ! git diff --staged --quiet; then
