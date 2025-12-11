@@ -1,11 +1,9 @@
 name: Update Language Stats
 
 on:
-  # 每天 UTC 时间凌晨 2 点运行（可改）
   schedule:
-    - cron: '0 2 * * *'
-  # 手动触发
-  workflow_dispatch:
+    - cron: '0 2 * * *'  # 每天 UTC 2 点运行
+  workflow_dispatch:     # 允许手动触发
 
 jobs:
   update-readme:
@@ -15,12 +13,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Generate language stats SVG
-        uses: vn7n24fzkq/github-profile-summary-cards@release
+        uses: anuraghazra/github-readme-stats@v3
         with:
           username: ${{ github.repository_owner }}
           theme: github_dark
           include_all_commits: true
-          output: assets/lang-stats.svg
+          card_width: 495
+          hide_border: true
+          output_file: assets/lang-stats.svg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 👈 关键：在这里加！
 
       - name: Commit and push if changed
         run: |
