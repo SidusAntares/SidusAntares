@@ -2,8 +2,8 @@ name: Update Language Stats
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # 每天 UTC 2 点运行
-  workflow_dispatch:     # 允许手动触发
+    - cron: '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
   update-readme:
@@ -12,8 +12,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Create assets folder (just in case)
+        run: mkdir -p assets
+
       - name: Generate language stats SVG
-        uses: anuraghazra/github-readme-stats@v3
+        uses: anuraghazra/github-readme-stats@master  # ← 关键：不用 @v3
         with:
           username: ${{ github.repository_owner }}
           theme: github_dark
@@ -22,7 +25,7 @@ jobs:
           hide_border: true
           output_file: assets/lang-stats.svg
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 👈 关键：在这里加！
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit and push if changed
         run: |
