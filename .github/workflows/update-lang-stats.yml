@@ -1,4 +1,4 @@
-name: Update Language Stats (via API)
+name: Update Language Stats (with PAT)
 
 on:
   schedule:
@@ -9,43 +9,28 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch language stats SVG
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch language stats
         run: |
           mkdir -p assets
           curl -s "https://github-readme-stats.vercel.app/api/top-langs/?username=${{ github.repository_owner }}&theme=github_dark&layout=compact&card_width=495&hide_border=true" > assets/lang-stats.svg
 
-      - name: Get current SHA (if file exists)
-        id: get-sha
-        run: |
-          sha=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/contents/assets/lang-stats.svg" \
-            | jq -r '.sha // empty')
-          if [ -n "$sha" ]; then
-            echo "sha=$sha" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Upload SVG via GitHub API
+      - name: Commit and push with PAT
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          content=$(base64 -w 0 assets/lang-stats.svg)
-          message="chore: auto-update language stats [skip ci]"
-          branch="main"  # ← 改成你的默认分支名
-
-          data=$(jq -n \
-            --arg message "$message" \
-            --arg content "$content" \
-            --arg branch "$branch" \
-            --arg sha "${{ steps.get-sha.outputs.sha }}" \
-            '{
-              message: $message,
-              content: $content,
-              branch: $branch,
-              sha: ($sha // null)
-            }')
-
-          curl -X PUT \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/contents/assets/lang-stats.svg" \
-            -d "$data"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 使用 PAT 认证（不会被特殊字符干扰）
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+          
+          git add assets/lang-stats.svg
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: auto-update language stats [skip ci]"
+            git push
+          else
+            echo "No changes"
+          fi
