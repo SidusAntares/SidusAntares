@@ -18,14 +18,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           USERNAME: ${{ github.repository_owner }}
-          # 注意：参数名是大写！
-          BRANCH_NAME: main  # 改成你的默认分支，如 main / master
-          AUTO_PUSH: false   # 我们自己控制提交
+          AUTO_PUSH: false
+
+      - name: Debug: list generated files
+        run: |
+          echo "=== Generated files ==="
+          ls -R profile-summary-card-output || echo "❌ No cards generated!"
 
       - name: Create assets folder and copy card
         run: |
           mkdir -p assets
-          # 复制“按提交的语言统计”卡片（最接近你想要的）
+          # 尝试复制 CommitsPerLanguageCard（最常用）
           cp profile-summary-card-output/default/CommitsPerLanguageCard.svg assets/lang-stats.svg
 
       - name: Commit and push if changed
